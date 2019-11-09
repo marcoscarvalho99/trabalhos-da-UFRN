@@ -1,4 +1,5 @@
 import React from 'react';
+import Type from './Type';
 
 export default class Pokemon extends React.Component {
     constructor() {
@@ -6,6 +7,7 @@ export default class Pokemon extends React.Component {
         this.state = {
             id: null,
             name: null,
+            types: 1,
             type1: null,
             type2: null,
             next: 'https://pokeapi.co/api/v2/pokemon/1',
@@ -18,17 +20,29 @@ export default class Pokemon extends React.Component {
         const url = this.state.next;
         const res = await fetch(url);
         const pokemon = await res.json();
+        
 
         this.setState({
             id: pokemon.id,
             name: pokemon.name,
+            types: pokemon.types.length,
             type1: pokemon.types[0].type.name,
-            type2: pokemon.types[1].type.name,
+            type2: null,
             next: 'https://pokeapi.co/api/v2/pokemon/'+(pokemon.id+1),
             height: pokemon.height,
             weight: pokemon.weight,
             sprite: pokemon.sprites.front_default
         });
+
+        if(pokemon.types.length === 2){
+            this.setState({
+                type2: pokemon.types[1].type.name,
+            })
+        }
+        
+        
+
+        
     }
     render() {
         return (
@@ -36,11 +50,12 @@ export default class Pokemon extends React.Component {
                 <img src={this.state.sprite} ></img>
                 <div>id: {this.state.id}</div>
                 <div>name: {this.state.name}</div>
-                <div>type 1: {this.state.type1}</div>
-                <div>type 2: {this.state.type2}</div>
+                <Type type={this.state.type1} />
+                {this.state.types == 2 ? <Type type={this.state.type2} /> : null}
                 <div>height: {this.state.height}</div>
                 <div>weight: {this.state.weight}</div>
                 <div>next: {this.state.next}</div>
+                {/* <img src={"https://assets.pokemon.com/assets/cms2/img/pokedex/detail/0" + this.state.id +".png"}></img> */}
                 
             </div>
         );
